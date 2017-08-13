@@ -9,19 +9,18 @@ require 'active_fulfillment'
 # fulfillment service.
 
 class FulfillmentService < ActiveRecord::Base
-
   def self.secret
     ENV['SECRET']
   end
 
-  attr_encrypted :username, :key => secret, :attribute => 'username_encrypted'
-  attr_encrypted :password, :key => secret, :attribute => 'password_encrypted'
+  attr_encrypted :username, key: secret, attribute: 'username_encrypted'
+  attr_encrypted :password, key: secret, attribute: 'password_encrypted'
   validates_presence_of :username, :password
   validates :shop, uniqueness: true
-  before_save :check_credentials, unless: "Sinatra::Base.test?"
+  before_save :check_credentials, unless: 'Sinatra::Base.test?'
 
   def self.service_name
-    "my-fulfillment-service"
+    'nwframing-fulfillment-service'
   end
 
   def fulfill(order, fulfillment)
@@ -35,7 +34,7 @@ class FulfillmentService < ActiveRecord::Base
     response.success?
   end
 
-  def fetch_stock_levels(options={})
+  def fetch_stock_levels(options = {})
     instance.fetch_stock_levels(options)
   end
 
@@ -47,56 +46,68 @@ class FulfillmentService < ActiveRecord::Base
 
   def instance
     @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
-      :login => username,
-      :password => password,
-      :test => true,
-      :include_empty_stock => true
+      login: username,
+      password: password,
+      test: true,
+      include_empty_stock: true
     )
   end
 
-   def address(address_object)
-    {:name     => address_object.name,
-     :company  => address_object.company,
-     :address1 => address_object.address1,
-     :address2 => address_object.address2,
-     :phone    => address_object.phone,
-     :city     => address_object.city,
-     :state    => address_object.province_code,
-     :country  => address_object.country_code,
-     :zip      => address_object.zip}
-  end
+  def address(address_object)
+    {
+      name: address_object.name,
+      company: address_object.company,
+      address1: address_object.address1,
+      address2: address_object.address2,
+      phone: address_object.phone,
+      city: address_object.city,
+      state: address_object.province_code,
+      country: address_object.country_code,
+      zip: address_object.zip
+    }
+ end
 
   def line_items(order, fulfillment)
     fulfillment.line_items.map do |line|
-      { sku: line.sku,
+      next unless line.quantity > 0
+      {
+        sku: line.sku,
         quantity: line.quantity,
         description: line.title,
         value: line.price,
-        currency_code: order.currency
-      } if line.quantity > 0
+        currency_code: order.currency,
+        url: image_url(line.sku)
+      }
     end.compact
   end
 
+  def image_url(sku)
+    title = sku.split(':')[1]
+    size = sku.split('-')[0]
+    ImageInfo.where(title: title, size: size).take.url
+  end
+
   def fulfill_options(order, fulfillment)
-    {:order_date      => order.created_at,
-     :comment         => 'Thank you for your purchase',
-     :email           => order.email,
-     :tracking_number => fulfillment.tracking_number,
-     :shipping_method => shipping_code(order.shipping_lines.first.code),
-     :note            => order.note}
+    {
+      order_date: order.created_at,
+      comment: 'Thank you for your purchase',
+      email: order.email,
+      tracking_number: fulfillment.tracking_number,
+      shipping_method: shipping_code(order.shipping_lines.first.code),
+      note: order.note
+    }
   end
 
   def shipping_code(label)
     methods = ActiveMerchant::Fulfillment::ShipwireService.shipping_methods
-    methods.each{ |title, code| return code if title.downcase == label.to_s.downcase }
-    return label  # make sure to never send an empty shipping method to Shipwire
+    methods.each { |title, code| return code if title.casecmp(label.to_s.downcase).zero? }
+    label # make sure to never send an empty shipping method to Shipwire
   end
 
   def check_credentials
     unless instance.valid_credentials?
-      errors.add(:password, "Must have valid shipwire credentials to use the services provided by this app.")
-      return false
+      errors.add(:password, 'Must have valid NorthWest Framing credentials to use the services provided by this app.')
+      false
     end
   end
-
 end
