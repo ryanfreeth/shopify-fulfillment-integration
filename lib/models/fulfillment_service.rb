@@ -45,7 +45,7 @@ class FulfillmentService < ActiveRecord::Base
   private
 
   def instance
-    @instance ||= ActiveMerchant::Fulfillment::ShipwireService.new(
+    @instance ||= ActiveFulfillment::NWFramingService.new(
       login: username,
       password: password,
       test: true,
@@ -99,7 +99,7 @@ class FulfillmentService < ActiveRecord::Base
   end
 
   def shipping_code(label)
-    methods = ActiveMerchant::Fulfillment::ShipwireService.shipping_methods
+    methods = ActiveFulfillment::NWFramingService.shipping_methods
     methods.each { |title, code| return code if title.casecmp(label.to_s.downcase).zero? }
     label # make sure to never send an empty shipping method to Shipwire
   end

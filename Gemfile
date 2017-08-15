@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-gem 'active_fulfillment'
+gem 'active_fulfillment', github: 'ryanfreeth/active_fulfillment'
 
 gem 'omniauth-shopify-oauth2', '~> 1.1.8'
 gem 'shopify-sinatra-app', '~> 0.1.0'

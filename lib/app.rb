@@ -18,12 +18,12 @@ class SinatraApp < Sinatra::Base
       @products = []
       page = 1
       begin
-        batch = ShopifyAPI::Variant.find(:all, params: {limit: 250, page: page})
+        batch = ShopifyAPI::Variant.find(:all, params: { limit: 250, page: page })
         @products.concat batch.select { |variant|
           variant.fulfillment_service == FulfillmentService.service_name
         }
         page += 1
-      end while batch.size > 0
+      end while !batch.empty?
 
       erb :home
     end
@@ -37,13 +37,13 @@ class SinatraApp < Sinatra::Base
   get '/product_app_link' do
     shopify_session do
       saved = 0
-      params["ids"].each do |id|
+      params['ids'].each do |id|
         product = ShopifyAPI::Product.find(id)
         product.variants.each do |variant|
           variant.fulfillment_service = 'my-fulfillment-service'
           variant.inventory_management = 'my-fulfillment-service'
         end
-        saved +=1 if product.save
+        saved += 1 if product.save
       end
 
       flash[:notice] = "Updated Fulfillment Settings for #{saved} products"
@@ -74,7 +74,7 @@ class SinatraApp < Sinatra::Base
   #
   get '/fetch_stock.json' do
     fulfillment_session do |service|
-      sku = params["sku"]
+      sku = params['sku']
       response = service.fetch_stock_levels(sku: sku)
       stock_levels = response.stock_levels
 
@@ -94,7 +94,7 @@ class SinatraApp < Sinatra::Base
   #
   get '/fetch_tracking_numbers.json' do
     fulfillment_session do |service|
-      order_ids = params["order_ids"]
+      order_ids = params['order_ids']
       response = service.fetch_tracking_numbers(order_ids)
       tracking_numbers = response.tracking_numbers
 
@@ -111,38 +111,30 @@ class SinatraApp < Sinatra::Base
   # and the fulfillment service object itself.
   def install
     shopify_session do
-
-      fulfillment_service = ShopifyAPI::FulfillmentService.new({
-        name: "my-fulfillment-service",
-        handle: "my-fulfillment-service",
-        callback_url: base_url,
-        inventory_management: true,
-        tracking_support: true,
-        requires_shipping_method: false,
-        response_format: "json"
-      })
+      fulfillment_service = ShopifyAPI::FulfillmentService.new(name: 'my-fulfillment-service',
+                                                               handle: 'my-fulfillment-service',
+                                                               callback_url: base_url,
+                                                               inventory_management: true,
+                                                               tracking_support: true,
+                                                               requires_shipping_method: false,
+                                                               response_format: 'json')
       fulfillment_service.save
 
-      fulfillment_webhook = ShopifyAPI::Webhook.new({
-        topic: "fulfillments/create",
-        address: "#{base_url}/fulfill.json",
-        format: "json"
-      })
+      fulfillment_webhook = ShopifyAPI::Webhook.new(topic: 'fulfillments/create',
+                                                    address: "#{base_url}/fulfill.json",
+                                                    format: 'json')
       fulfillment_webhook.save
 
-      uninstall_webhook = ShopifyAPI::Webhook.new({
-        topic: "app/uninstalled",
-        address: "#{base_url}/uninstall.json",
-        format: "json"
-      })
+      uninstall_webhook = ShopifyAPI::Webhook.new(topic: 'app/uninstalled',
+                                                  address: "#{base_url}/uninstall.json",
+                                                  format: 'json')
       uninstall_webhook.save
-
     end
     redirect '/'
   end
 
   def uninstall
-    webhook_session do |params|
+    webhook_session do |_params|
       # remove any dependent models
       service = FulfillmentService.where(shop: current_shop_name).destroy
       # remove shop model
@@ -153,12 +145,9 @@ class SinatraApp < Sinatra::Base
   # This is a helper method in the same vein as the webhook_session
   # method provided by shopify-sinatra-app only for handling the
   # fulfillment requests which are slightly different than webhooks
-  def fulfillment_session(&blk)
-    shop_name = params["shop"]
+  def fulfillment_session
+    shop_name = params['shop']
     service = FulfillmentService.find_by(shop: shop_name)
-    if service.present?
-      yield service
-    end
+    yield service if service.present?
   end
-
 end
