@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,28 +12,25 @@
 
 ActiveRecord::Schema.define(version: 20170801065025) do
 
-  create_table "fulfillment_services", force: true do |t|
-    t.string "username_encrypted"
-    t.string "password_encrypted"
-    t.string "shop"
+  create_table "fulfillment_services", force: :cascade do |t|
+    t.string "username_encrypted", limit: 255
+    t.string "password_encrypted", limit: 255
+    t.string "shop", limit: 255
+    t.index ["shop"], name: "index_fulfillment_services_on_shop"
   end
 
-  add_index "fulfillment_services", ["shop"], name: "index_fulfillment_services_on_shop"
-
-  create_table "shop_items", force: true do |t|
-    t.string  "title"
-    t.string  "size"
-    t.string  "url"
+  create_table "shop_items", force: :cascade do |t|
+    t.string "title", limit: 255
+    t.string "size", limit: 255
+    t.string "url", limit: 255
     t.integer "edition"
+    t.index ["title", "size"], name: "index_shop_items_on_title_and_size", unique: true
   end
 
-  add_index "shop_items", ["title", "size"], name: "index_shop_items_on_title_and_size", unique: true
-
-  create_table "shops", force: true do |t|
-    t.string "name"
-    t.string "token_encrypted"
+  create_table "shops", force: :cascade do |t|
+    t.string "name", limit: 255
+    t.string "token_encrypted", limit: 255
+    t.index ["name"], name: "index_shops_on_name"
   end
-
-  add_index "shops", ["name"], name: "index_shops_on_name"
 
 end

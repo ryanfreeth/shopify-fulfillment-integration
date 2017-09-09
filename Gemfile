@@ -5,7 +5,7 @@ gem 'active_fulfillment', git: 'https://github.com/ryanfreeth/active_fulfillment
 
 gem 'omniauth-shopify-oauth2', '~> 1.1.8'
 gem 'shopify-sinatra-app', '~> 0.1.0'
-gem 'shopify_api', '~> 4.0.2'
+gem 'shopify_api', '~> 4.3.0'
 
 gem 'foreman'
 gem 'rake'

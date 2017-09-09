@@ -108,8 +108,8 @@ GEM
       sinatra-activerecord
       sinatra-redis
       sinatra-twitter-bootstrap
-    shopify_api (4.0.7)
-      activeresource
+    shopify_api (4.3.9)
+      activeresource (>= 3.0.0)
       rack
     sinatra (2.0.0)
       mustermann (~> 1.0)
@@ -148,7 +148,7 @@ DEPENDENCIES
   rack-test
   rake
   shopify-sinatra-app (~> 0.1.0)
-  shopify_api (~> 4.0.2)
+  shopify_api (~> 4.3.0)
   sqlite3
 
 RUBY VERSION
