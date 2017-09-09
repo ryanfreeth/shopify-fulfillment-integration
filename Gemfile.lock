@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/ryanfreeth/active_fulfillment.git
+  remote: https://github.com/ryanfreeth/active_fulfillment
   revision: 02794e6a8992594c1aeb4963e09256eb7d458ada
   specs:
     active_fulfillment (4.0.0)
