@@ -11,6 +11,7 @@ class SinatraApp < Sinatra::Base
     shopify_session do
       # params.merge!(shop: current_shop_name)
       params[:shop] = current_shop_name
+      params.except!(:captures)
       service = FulfillmentService.new(params)
 
       if service.save
