@@ -1,4 +1,4 @@
-class CreateShopItems < ActiveRecord::Migration
+class CreateShopItems < ActiveRecord::Migration[5.1]
   def change
     create_table :shop_items do |t|
       t.string :title

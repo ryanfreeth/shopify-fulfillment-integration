@@ -1,4 +1,4 @@
-class AddFulfillmentService < ActiveRecord::Migration
+class AddFulfillmentService < ActiveRecord::Migration[5.1]
   def self.up
     create_table :fulfillment_services do |t|
       t.integer :shop_id

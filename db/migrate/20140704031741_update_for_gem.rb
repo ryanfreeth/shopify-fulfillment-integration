@@ -1,4 +1,4 @@
-class UpdateForGem < ActiveRecord::Migration
+class UpdateForGem < ActiveRecord::Migration[5.1]
   def self.up
     remove_index :fulfillment_services, :shop_id
     remove_column :fulfillment_services, :shop_id
