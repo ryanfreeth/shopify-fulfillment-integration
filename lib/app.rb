@@ -111,8 +111,8 @@ class SinatraApp < Sinatra::Base
   # and the fulfillment service object itself.
   def install
     shopify_session do
-      fulfillment_service = ShopifyAPI::FulfillmentService.new(name: 'my-fulfillment-service',
-                                                               handle: 'my-fulfillment-service',
+      fulfillment_service = ShopifyAPI::FulfillmentService.new(name: 'nw-fulfillment-service',
+                                                               handle: 'nw-fulfillment-service',
                                                                callback_url: base_url,
                                                                inventory_management: true,
                                                                tracking_support: true,

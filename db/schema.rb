@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140704031741) do
+ActiveRecord::Schema.define(version: 20170801065025) do
 
   create_table "fulfillment_services", force: true do |t|
     t.string "username_encrypted"
@@ -20,6 +20,15 @@ ActiveRecord::Schema.define(version: 20140704031741) do
   end
 
   add_index "fulfillment_services", ["shop"], name: "index_fulfillment_services_on_shop"
+
+  create_table "shop_items", force: true do |t|
+    t.string  "title"
+    t.string  "size"
+    t.string  "url"
+    t.integer "edition"
+  end
+
+  add_index "shop_items", ["title", "size"], name: "index_shop_items_on_title_and_size", unique: true
 
   create_table "shops", force: true do |t|
     t.string "name"

@@ -84,7 +84,7 @@ class FulfillmentService < ActiveRecord::Base
   def image_url(sku)
     title = sku.split(':')[1]
     size = sku.split('-')[0]
-    ImageInfo.where(title: title, size: size).take.url
+    ShopItem.where(title: title, size: size).take.url
   end
 
   def fulfill_options(order, fulfillment)
