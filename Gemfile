@@ -5,7 +5,6 @@ ruby '2.3.4'
 
 gem 'active_fulfillment', git: 'https://github.com/ryanfreeth/active_fulfillment'
 
-gem 'attr_encrypted', '~> 1.3.2'
 gem 'omniauth-shopify-oauth2', '~> 1.1.8'
 gem 'shopify-sinatra-app', '~> 0.1.0'
 gem 'shopify_api', '~> 4.3.0'

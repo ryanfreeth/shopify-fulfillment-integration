@@ -10,12 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170801065025) do
+ActiveRecord::Schema.define(version: 20170910202749) do
 
   create_table "fulfillment_services", force: :cascade do |t|
     t.string "username_encrypted", limit: 255
     t.string "password_encrypted", limit: 255
     t.string "shop", limit: 255
+    t.string "username_encrypted_iv"
+    t.string "password_encrypted_iv"
     t.index ["shop"], name: "index_fulfillment_services_on_shop"
   end
 
@@ -30,6 +32,7 @@ ActiveRecord::Schema.define(version: 20170801065025) do
   create_table "shops", force: :cascade do |t|
     t.string "name", limit: 255
     t.string "token_encrypted", limit: 255
+    t.string "token_encrypted_iv"
     t.index ["name"], name: "index_shops_on_name"
   end
 

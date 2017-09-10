@@ -48,6 +48,7 @@ class FulfillmentService < ActiveRecord::Base
     @instance ||= ActiveFulfillment::NWFramingService.new(
       login: username,
       password: password,
+      role: 'BeautifulArtShop',
       test: true,
       include_empty_stock: true
     )
