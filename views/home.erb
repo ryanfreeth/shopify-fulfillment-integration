@@ -35,6 +35,15 @@
 
         <div class="control-group">
           <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-wrench"></i></span>
+              <input type="text" name="role" <%= "value='#{@service.role}'" if @service.present? %> placeholder="role">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="controls">
             <input type="submit" class="btn btn-default" value="save">
           </div>
         </div>
@@ -61,3 +70,11 @@
 <% else %>
   <p> No products are using this Fulfillment Service yet.</p>
 <% end %>
+
+<h2>Webhooks</h2>
+
+<ul>
+  <% @webhooks.each do |webhook| %>
+      <li><%= webhook.id %></li>
+  <% end %>
+</ul>

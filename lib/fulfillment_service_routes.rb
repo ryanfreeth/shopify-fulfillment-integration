@@ -41,7 +41,7 @@ class SinatraApp < Sinatra::Base
   private
 
   def service_params(params)
-    params.slice("username", "password")
+    params.slice('username', 'password', 'role')
   end
 
 end

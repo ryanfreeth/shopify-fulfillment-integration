@@ -1,49 +1,90 @@
 {
-    "created_at": "2014-04-28T13:28:03-04:00",
-    "id": 255858046,
-    "order_id": 450789469,
-    "service": "my-fulfillment-service",
+    "id": 4874422723,
+    "order_id": 5562922883,
     "status": "pending",
+    "created_at": "2017-09-12T23:44:31-04:00",
+    "service": "nw-fulfillment",
+    "updated_at": "2017-09-12T23:44:31-04:00",
     "tracking_company": null,
-    "updated_at": "2014-04-28T13:28:03-04:00",
-    "tracking_number": "1Z2345",
-    "tracking_numbers": [
-        "1Z2345"
-    ],
-    "tracking_url": "http://wwwapps.ups.com/etracking/tracking.cgi?InquiryNumber1=1Z2345&TypeOfInquiryNumber=T&AcceptUPSLicenseAgreement=yes&submit=Track",
-    "tracking_urls": [
-        "http://wwwapps.ups.com/etracking/tracking.cgi?InquiryNumber1=1Z2345&TypeOfInquiryNumber=T&AcceptUPSLicenseAgreement=yes&submit=Track"
-    ],
-    "receipt": {
-        "testcase": true,
-        "authorization": "123456"
+    "shipment_status": null,
+    "email": "ryan.freeth@gmail.com",
+    "destination": {
+        "first_name": "Ryan",
+        "address1": "603-1865 Barclay Street",
+        "phone": null,
+        "city": "Vancouver",
+        "zip": "V6G1K7",
+        "province": "British Columbia",
+        "country": "Canada",
+        "last_name": "Freeth",
+        "address2": "",
+        "company": null,
+        "latitude": 49.2908614,
+        "longitude": -123.1383331,
+        "name": "Ryan Freeth",
+        "country_code": "CA",
+        "province_code": "BC"
     },
+    "tracking_number": null,
+    "tracking_numbers": [],
+    "tracking_url": null,
+    "tracking_urls": [],
+    "receipt": {},
     "line_items": [
         {
-            "fulfillment_service": "my-fulfillment-service",
-            "fulfillment_status": null,
-            "grams": 200,
-            "id": 466157049,
-            "price": "199.00",
-            "product_id": 632910392,
-            "quantity": 1,
+            "id": 10822209603,
+            "variant_id": 44566720323,
+            "title": "Clowns",
+            "quantity": 3,
+            "price": "100.00",
+            "grams": 0,
+            "sku": "clowns:16x24-SB",
+            "variant_title": "16x24 / black",
+            "vendor": "freeth-test",
+            "fulfillment_service": "nw-fulfillment",
+            "product_id": 10861536643,
             "requires_shipping": true,
-            "sku": "IPOD2008GREEN",
             "taxable": true,
-            "title": "IPod Nano - 8gb",
-            "variant_id": 39072856,
-            "variant_title": "green",
-            "vendor": null,
-            "name": "IPod Nano - 8gb - green",
-            "variant_inventory_management": "my-fulfillment-service",
-            "properties": [
+            "gift_card": false,
+            "name": "Clowns - 16x24 / black",
+            "variant_inventory_management": null,
+            "properties": [],
+            "product_exists": true,
+            "fulfillable_quantity": 0,
+            "total_discount": "0.00",
+            "fulfillment_status": null,
+            "tax_lines": [
                 {
-                    "name": "Custom Engraving",
-                    "value": "Happy Birthday"
+                    "title": "GST",
+                    "price": "15.00",
+                    "rate": 0.05
+                },
+                {
+                    "title": "PST",
+                    "price": "21.00",
+                    "rate": 0.07
                 }
             ],
-            "product_exists": true,
-            "tax_lines": []
+            "origin_location": {
+                "id": 3505832963,
+                "country_code": "CA",
+                "province_code": "BC",
+                "name": "freeth-test",
+                "address1": "1865 Barclay Street",
+                "address2": "",
+                "city": "Vancouver",
+                "zip": "V6G 1K7"
+            },
+            "destination_location": {
+                "id": 3498205443,
+                "country_code": "CA",
+                "province_code": "BC",
+                "name": "Ryan Freeth",
+                "address1": "603-1865 Barclay Street",
+                "address2": "",
+                "city": "Vancouver",
+                "zip": "V6G1K7"
+            }
         }
     ]
 }

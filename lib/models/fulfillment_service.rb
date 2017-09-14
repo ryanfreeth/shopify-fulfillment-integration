@@ -1,6 +1,7 @@
 require 'sinatra/shopify-sinatra-app'
 require 'attr_encrypted'
 require 'active_fulfillment'
+require_relative 'shop_item'
 
 # This is the fulfillment service model. It holds all of the data
 # associated with the service such as the shop it belongs to and the
@@ -15,12 +16,12 @@ class FulfillmentService < ActiveRecord::Base
 
   attr_encrypted :username, key: secret, attribute: 'username_encrypted'
   attr_encrypted :password, key: secret, attribute: 'password_encrypted'
-  validates_presence_of :username, :password
+  validates_presence_of :username, :password, :role
   validates :shop, uniqueness: true
   before_save :check_credentials, unless: 'Sinatra::Base.test?'
 
   def self.service_name
-    'nwframing-fulfillment-service'
+    'nw-fulfillment'
   end
 
   def fulfill(order, fulfillment)
@@ -48,8 +49,8 @@ class FulfillmentService < ActiveRecord::Base
     @instance ||= ActiveFulfillment::NWFramingService.new(
       login: username,
       password: password,
-      role: 'BeautifulArtShop',
-      test: true,
+      role: role,
+      test: false,
       include_empty_stock: true
     )
   end
@@ -69,23 +70,38 @@ class FulfillmentService < ActiveRecord::Base
  end
 
   def line_items(order, fulfillment)
-    fulfillment.line_items.map do |line|
+    items = []
+    fulfillment.line_items.each do |line|
       next unless line.quantity > 0
-      {
-        sku: line.sku,
-        quantity: line.quantity,
-        description: line.title,
-        value: line.price,
-        currency_code: order.currency,
-        url: image_url(line.sku)
-      }
-    end.compact
+      shop_item = get_shop_item(line.sku)
+      line.quantity.to_i.times do
+        items << line_item(line, shop_item.edition, shop_item.total_edition)
+        shop_item.edition += 1
+      end
+      shop_item.save
+    end
+    items.compact
+  end
+
+  def line_item(line, edition, total_edition)
+    {
+      sku: line.sku.split(':')[1],
+      quantity: 1,
+      description: "#{line.title}. Edition #{edition} of #{total_edition}",
+      price: line.price,
+      url: image_url(line.sku)
+    }
+  end
+
+  def get_shop_item(sku)
+    title = sku.split(':')[0]
+    nw_sku = sku.split(':')[1]
+    size = nw_sku.split('-')[0]
+    ShopItem.where(title: title, size: size).take
   end
 
   def image_url(sku)
-    title = sku.split(':')[1]
-    size = sku.split('-')[0]
-    ShopItem.where(title: title, size: size).take.url
+    get_shop_item(sku).url
   end
 
   def fulfill_options(order, fulfillment)
@@ -94,7 +110,7 @@ class FulfillmentService < ActiveRecord::Base
       comment: 'Thank you for your purchase',
       email: order.email,
       tracking_number: fulfillment.tracking_number,
-      shipping_method: shipping_code(order.shipping_lines.first.code),
+      shipping_method: 'Ground',
       note: order.note
     }
   end

@@ -25,6 +25,8 @@ class SinatraApp < Sinatra::Base
         page += 1
       end while !batch.empty?
 
+      @webhooks = ShopifyAPI::Webhook.find(:all, :params => {:limit => 10})
+
       erb :home
     end
   end
@@ -40,8 +42,8 @@ class SinatraApp < Sinatra::Base
       params['ids'].each do |id|
         product = ShopifyAPI::Product.find(id)
         product.variants.each do |variant|
-          variant.fulfillment_service = 'my-fulfillment-service'
-          variant.inventory_management = 'my-fulfillment-service'
+          variant.fulfillment_service = 'nw-fulfillment'
+          variant.inventory_management = 'nw-fulfillment'
         end
         saved += 1 if product.save
       end
@@ -61,6 +63,10 @@ class SinatraApp < Sinatra::Base
   #
   post '/fulfill.json' do
     webhook_job(FulfillmentJob)
+  end
+
+  post '/uninstall.json' do
+    uninstall
   end
 
   # /fetch_stock
@@ -111,23 +117,29 @@ class SinatraApp < Sinatra::Base
   # and the fulfillment service object itself.
   def install
     shopify_session do
-      fulfillment_service = ShopifyAPI::FulfillmentService.new(name: 'nw-fulfillment-service',
-                                                               handle: 'nw-fulfillment-service',
-                                                               callback_url: base_url,
-                                                               inventory_management: true,
-                                                               tracking_support: true,
-                                                               requires_shipping_method: false,
-                                                               response_format: 'json')
+      fulfillment_service = ShopifyAPI::FulfillmentService.new({
+                                                                   name: 'nw-fulfillment',
+                                                                   handle: 'nw-fulfillment',
+                                                                   callback_url: base_url,
+                                                                   inventory_management: true,
+                                                                   tracking_support: true,
+                                                                   requires_shipping_method: false,
+                                                                   response_format: 'json'
+                                                               })
       fulfillment_service.save
 
-      fulfillment_webhook = ShopifyAPI::Webhook.new(topic: 'fulfillments/create',
-                                                    address: "#{base_url}/fulfill.json",
-                                                    format: 'json')
+      fulfillment_webhook = ShopifyAPI::Webhook.new({
+                                                        topic: 'fulfillments/create',
+                                                        address: "#{base_url}/fulfill.json",
+                                                        format: 'json'
+                                                    })
       fulfillment_webhook.save
 
-      uninstall_webhook = ShopifyAPI::Webhook.new(topic: 'app/uninstalled',
-                                                  address: "#{base_url}/uninstall.json",
-                                                  format: 'json')
+      uninstall_webhook = ShopifyAPI::Webhook.new({
+                                                      topic: 'app/uninstalled',
+                                                      address: "#{base_url}/uninstall.json",
+                                                      format: 'json'
+                                                  })
       uninstall_webhook.save
     end
     redirect '/'

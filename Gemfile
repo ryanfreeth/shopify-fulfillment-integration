@@ -3,7 +3,8 @@
 source 'https://rubygems.org'
 ruby '2.3.4'
 
-gem 'active_fulfillment', git: 'https://github.com/ryanfreeth/active_fulfillment'
+gem 'active_fulfillment', path: '/Users/ryan/dev/active_fulfillment'
+# gem 'active_fulfillment', git: 'https://github.com/ryanfreeth/active_fulfillment', :branch => 'master'
 
 gem 'omniauth-shopify-oauth2', '~> 1.1.8'
 gem 'shopify-sinatra-app', '~> 0.1.0'
@@ -22,5 +23,6 @@ group :development do
   gem 'mocha', require: false
   gem 'pry'
   gem 'rack-test'
+  gem 'test-unit'
   gem 'sqlite3'
 end

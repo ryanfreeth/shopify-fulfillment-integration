@@ -3,3 +3,5 @@
 *.sublime*
 ngrok
 .idea
+
+prod-seed.sql
