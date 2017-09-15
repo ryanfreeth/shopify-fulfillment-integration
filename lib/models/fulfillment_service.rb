@@ -75,7 +75,7 @@ class FulfillmentService < ActiveRecord::Base
       next unless line.quantity > 0
       shop_item = get_shop_item(line.sku)
       line.quantity.to_i.times do
-        items << line_item(line, shop_item.edition, shop_item.total_edition)
+        items << line_item(line, shop_item.edition, shop_item.total_editions)
         shop_item.edition += 1
       end
       shop_item.save

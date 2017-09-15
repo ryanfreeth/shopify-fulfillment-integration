@@ -62,7 +62,21 @@ class SinatraApp < Sinatra::Base
   # fulfillment.
   #
   post '/fulfill.json' do
-    webhook_job(FulfillmentJob)
+    # webhook_job(FulfillmentJob)
+    webhook_session do |params|
+      return unless params["service"] == FulfillmentService.service_name
+
+      order = ShopifyAPI::Order.find(params["order_id"])
+      fulfillment = ShopifyAPI::Fulfillment.find(params["id"], :params => {:order_id => params["order_id"]})
+
+      @shop_name = request.env['HTTP_X_SHOPIFY_SHOP_DOMAIN']
+      shop = Shop.find_by(name: @shop_name)
+      service = FulfillmentService.find_by(shop: shop.name)
+
+      if service.fulfill(order, fulfillment)
+        fulfillment.complete
+      end
+    end
   end
 
   post '/uninstall.json' do
