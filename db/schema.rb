@@ -10,7 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170914023539) do
+ActiveRecord::Schema.define(version: 20170919040514) do
+
+  create_table "editions", force: :cascade do |t|
+    t.integer "edition"
+    t.integer "total_editions"
+  end
 
   create_table "fulfillment_services", force: :cascade do |t|
     t.string "username_encrypted", limit: 255
@@ -23,12 +28,12 @@ ActiveRecord::Schema.define(version: 20170914023539) do
   end
 
   create_table "shop_items", force: :cascade do |t|
-    t.string "title", limit: 255
-    t.string "size", limit: 255
     t.string "url", limit: 255
-    t.integer "edition"
-    t.integer "total_editions"
-    t.index ["title", "size"], name: "index_shop_items_on_title_and_size", unique: true
+    t.integer "edition_id"
+    t.string "shop"
+    t.string "sku"
+    t.string "nw_sku"
+    t.index ["edition_id"], name: "index_shop_items_on_edition_id"
   end
 
   create_table "shops", force: :cascade do |t|

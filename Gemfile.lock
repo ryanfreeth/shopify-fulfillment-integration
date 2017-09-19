@@ -1,7 +1,5 @@
-GIT
-  remote: https://github.com/ryanfreeth/active_fulfillment
-  revision: aa13e2673c37bd0119595582091f8ef3f4c64de5
-  branch: master
+PATH
+  remote: /Users/ryan/dev/active_fulfillment
   specs:
     active_fulfillment (4.0.0)
       active_utils (~> 3.3.1)

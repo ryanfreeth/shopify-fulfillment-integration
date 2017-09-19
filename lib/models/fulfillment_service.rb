@@ -50,7 +50,7 @@ class FulfillmentService < ActiveRecord::Base
       login: username,
       password: password,
       role: role,
-      test: false,
+      test: true,
       include_empty_stock: true
     )
   end
@@ -73,31 +73,24 @@ class FulfillmentService < ActiveRecord::Base
     items = []
     fulfillment.line_items.each do |line|
       next unless line.quantity > 0
-      shop_item = get_shop_item(line.sku)
-      line.quantity.to_i.times do
-        items << line_item(line, shop_item.edition, shop_item.total_editions)
-        shop_item.edition += 1
-      end
-      shop_item.save
+      items << line_item(line)
     end
     items.compact
   end
 
-  def line_item(line, edition, total_edition)
+  def line_item(line)
     {
-      sku: line.sku.split(':')[1],
-      quantity: 1,
-      description: "#{line.title}. Edition #{edition} of #{total_edition}",
+      sku: get_shop_item(line.sku)[:nw_sku],
+      image_id: line.title,
+      quantity: line.quantity,
+      description: line.title,
       price: line.price,
       url: image_url(line.sku)
     }
   end
 
   def get_shop_item(sku)
-    title = sku.split(':')[0]
-    nw_sku = sku.split(':')[1]
-    size = nw_sku.split('-')[0]
-    ShopItem.where(title: title, size: size).take
+    ShopItem.find_by(shop: shop, sku: sku)
   end
 
   def image_url(sku)
@@ -111,8 +104,18 @@ class FulfillmentService < ActiveRecord::Base
       email: order.email,
       tracking_number: fulfillment.tracking_number,
       shipping_method: 'Ground',
-      note: order.note
+      note: order.note,
+      special_instructions: special_instructions(fulfillment)
     }
+  end
+
+  def special_instructions(fulfillment)
+    # foreach line item, decrement edition in transaction, build string of instructions
+    fulfillment.line_items.each do |line|
+      next unless line.quantity > 0
+      shop_item = get_shop_item(line.sku)
+    #   if shop_item has edition
+    end
   end
 
   def shipping_code(label)
