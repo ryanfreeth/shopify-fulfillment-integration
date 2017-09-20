@@ -4,4 +4,5 @@
 ngrok
 .idea
 
-prod-seed.sql
+shop_items-seed.sql
+editions-seed.sql

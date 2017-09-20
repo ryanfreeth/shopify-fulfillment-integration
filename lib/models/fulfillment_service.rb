@@ -2,6 +2,7 @@ require 'sinatra/shopify-sinatra-app'
 require 'attr_encrypted'
 require 'active_fulfillment'
 require_relative 'shop_item'
+require_relative 'edition'
 
 # This is the fulfillment service model. It holds all of the data
 # associated with the service such as the shop it belongs to and the
@@ -110,12 +111,22 @@ class FulfillmentService < ActiveRecord::Base
   end
 
   def special_instructions(fulfillment)
-    # foreach line item, decrement edition in transaction, build string of instructions
+    # foreach line item, increment edition in transaction, build string of instructions
+    special_instructions = ''
     fulfillment.line_items.each do |line|
-      next unless line.quantity > 0
-      shop_item = get_shop_item(line.sku)
-    #   if shop_item has edition
+      Edition.transaction do
+        next unless line.quantity > 0
+        shop_item = get_shop_item(line.sku)
+        if shop_item.edition.present?
+          line.quantity.to_i.times do
+            special_instructions << "#{line.name} edition #{shop_item.edition.edition} of #{shop_item.edition.total_editions}. "
+            shop_item.edition.edition += 1
+            shop_item.edition.save
+          end
+        end
+      end
     end
+    special_instructions
   end
 
   def shipping_code(label)
